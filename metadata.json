@@ -1,0 +1,8 @@
+{
+  "name": "WHISPER OS MUSIC",
+  "description": "Steer a continuous stream of music with text prompts",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "prompt": ""
+}

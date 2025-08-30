@@ -1,0 +1,19 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Google Sans';
+    src: url('https://fonts.gstatic.com/s/googlesans/v27/4UaGrENHsxJlGDuGo1OIlL3K-jMM.woff2') format('woff2');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Google Sans';
+    src: url('https://fonts.gstatic.com/s/googlesans/v27/4UaZrENHsxJlGDuGo1OIlL3L-iMFJw.woff2') format('woff2');
+    font-weight: 500;
+}
