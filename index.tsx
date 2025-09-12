@@ -14,11 +14,6 @@ import {formatDuration} from './utils.js';
 import {sharedStyles} from './shared-styles.js';
 
 // Import new mode and utility components
-import './quick-drop-mode.js';
-import './studio-mode.js';
-import './remix-lora-mode.js';
-import './releases-utility.js';
-import './settings-utility.js';
 import './j-chat.js';
 import type { QuickDropMode } from './quick-drop-mode.js';
 import type { ReleasesUtility } from './releases-utility.js';
@@ -65,6 +60,13 @@ class WhisperMusicStudio extends LitElement {
     @state() private barHeights: number[] = Array(50).fill(2);
     @state() private activeView: ActiveView = 'quick-drop';
     @state() private primaryAction = { label: 'Generate', action: () => {}, disabled: true };
+    @state() private loadedViews: Record<ActiveView, boolean> = {
+        'quick-drop': false,
+        'studio': false,
+        'remix-lora': false,
+        'releases': false,
+        'settings': false,
+    };
 
     @query('quick-drop-mode') private quickDropMode!: QuickDropMode;
     @query('releases-utility') private releasesUtility!: ReleasesUtility;
@@ -149,6 +151,15 @@ class WhisperMusicStudio extends LitElement {
             flex: 1;
             overflow-y: auto;
             position: relative;
+        }
+        .loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1c1c1c;
+            color: #ccc;
         }
         .player-bar {
             position: fixed;
@@ -253,6 +264,10 @@ class WhisperMusicStudio extends LitElement {
         this.removeEventListener('schedule-release', this._handleScheduleRelease as EventListener);
     }
 
+    override firstUpdated() {
+        this._loadView(this.activeView);
+    }
+
     protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
         if (changedProperties.has('currentTrack') || changedProperties.has('isPlaying')) {
             this._appContext = {
@@ -286,11 +301,12 @@ class WhisperMusicStudio extends LitElement {
         }
     }
 
-    private _handleScheduleRelease(e: CustomEvent) {
+    private async _handleScheduleRelease(e: CustomEvent) {
         const trackData = e.detail;
+        this.activeView = 'releases';
+        await this._loadView('releases');
         if (this.releasesUtility) {
             this.releasesUtility.scheduleNewRelease(trackData);
-            this.activeView = 'releases';
         }
     }
 
@@ -362,12 +378,36 @@ class WhisperMusicStudio extends LitElement {
         this.animationFrameId = requestAnimationFrame(() => this._animateVisualizer());
     }
 
+    private async _loadView(view: ActiveView) {
+        if (this.loadedViews[view]) return;
+        switch (view) {
+            case 'quick-drop':
+                await import('./quick-drop-mode.js');
+                break;
+            case 'studio':
+                await import('./studio-mode.js');
+                break;
+            case 'remix-lora':
+                await import('./remix-lora-mode.js');
+                break;
+            case 'releases':
+                await import('./releases-utility.js');
+                break;
+            case 'settings':
+                await import('./settings-utility.js');
+                break;
+        }
+        this.loadedViews = { ...this.loadedViews, [view]: true };
+    }
+
     private _handleViewChange(view: ActiveView) {
         this.activeView = view;
+        this._loadView(view);
     }
 
     private _renderActiveView() {
         return html`
+            ${!this.loadedViews[this.activeView] ? html`<div class="loading">Loading...</div>` : null}
             <quick-drop-mode .hidden=${this.activeView !== 'quick-drop'}></quick-drop-mode>
             <studio-mode .hidden=${this.activeView !== 'studio'}></studio-mode>
             <remix-lora-mode .hidden=${this.activeView !== 'remix-lora'}></remix-lora-mode>
