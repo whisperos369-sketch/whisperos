@@ -9,7 +9,7 @@ import {customElement, state, query} from 'lit/decorators.js';
 import {provide} from '@lit/context';
 import {classMap} from 'lit/directives/class-map.js';
 
-import {appContext, AppContext} from './context.js';
+import {appContext, type AppContext, type Track} from './context.js';
 import {formatDuration} from './utils.js';
 import {sharedStyles} from './shared-styles.js';
 
@@ -53,8 +53,8 @@ class WhisperMusicStudio extends LitElement {
         };
     }
     
-    @state() 
-    private currentTrack: AppContext['currentTrack'] = { title: 'Untitled', artist: 'J Agent', duration: 0, audioBuffer: null };
+    @state()
+    private currentTrack: Track = { title: 'Untitled', artist: 'J Agent', duration: 0, audioBuffer: null };
 
     @provide({context: appContext})
     @state()
@@ -263,7 +263,7 @@ class WhisperMusicStudio extends LitElement {
         }
     }
 
-    private _updateTrack = (track: AppContext['currentTrack']) => {
+    private _updateTrack = (track: Track) => {
         this._pauseCurrentTrack();
         this.currentTrack = track;
         this.isPlaying = false;

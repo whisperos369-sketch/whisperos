@@ -10,7 +10,7 @@ import { ContextConsumer } from '@lit/context';
 
 import { sharedStyles } from './shared-styles.js';
 import { aiService } from './ai-service.js';
-import { appContext, AppContext } from './context.js';
+import { appContext, type Track } from './context.js';
 import { audioBufferToWav } from './utils.js';
 import { StudioModule } from './studio-module.js';
 
@@ -24,7 +24,7 @@ type QuickDropResult = {
 
 @customElement('quick-drop-mode')
 export class QuickDropMode extends StudioModule {
-    private appContextConsumer = new ContextConsumer(this, {context: appContext, subscribe: true});
+    private appContextConsumer = new ContextConsumer<typeof appContext, QuickDropMode>(this, {context: appContext, subscribe: true});
     
     @state() private result: QuickDropResult = null;
     @state() private coverArtUrl = '';
@@ -140,7 +140,8 @@ export class QuickDropMode extends StudioModule {
                     const time = i / sampleRate;
                     data[i] = (Math.random() * 2 - 1) * Math.exp(-time * 3) * 0.3;
                 }
-                appContext.updateTrack({ title: concept.title, artist: leadVoice, duration, audioBuffer: buffer });
+                const track: Track = { title: concept.title, artist: leadVoice, duration, audioBuffer: buffer };
+                appContext.updateTrack(track);
             }
             
             const artResult = await artPromise;
