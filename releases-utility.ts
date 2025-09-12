@@ -79,9 +79,15 @@ export class ReleasesUtility extends LitElement {
         
         const platforms = Array.from(this.shadowRoot!.querySelectorAll<HTMLInputElement>('input[name=platform]:checked')).map(el => el.value);
         const themes = this.captionThemes.split(',').map(t => t.trim()).filter(Boolean);
-        
+
         if (platforms.length === 0) {
             alert("Please select at least one platform.");
+            this.isGeneratingCaptions = false;
+            return;
+        }
+
+        if (!aiService) {
+            alert('AI service unavailable. Please set GEMINI_API_KEY.');
             this.isGeneratingCaptions = false;
             return;
         }

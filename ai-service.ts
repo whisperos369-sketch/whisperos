@@ -12,9 +12,11 @@ class AIService {
     private chat: Chat | null = null;
 
     constructor() {
-        // IMPORTANT: This line must be present to initialize the AI service.
-        // It reads the API key from the environment variables.
-        this.ai = new GoogleGenAI({apiKey: process.env.API_KEY});
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            throw new Error('GEMINI_API_KEY environment variable is missing.');
+        }
+        this.ai = new GoogleGenAI({apiKey});
     }
 
     initializeChat() {
@@ -540,4 +542,11 @@ class AIService {
     }
 }
 
-export const aiService = new AIService();
+let aiService: AIService | null = null;
+try {
+    aiService = new AIService();
+} catch (e) {
+    console.warn('AI service failed to initialize:', e);
+}
+
+export { aiService };

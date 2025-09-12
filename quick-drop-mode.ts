@@ -106,6 +106,14 @@ export class QuickDropMode extends StudioModule {
             return;
         }
 
+        if (!aiService) {
+            this.statusMessage = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            console.error(this.statusMessage);
+            this.isLoading = false;
+            this._updatePrimaryAction();
+            return;
+        }
+
         this.result = null;
         this.coverArtUrl = '';
         
