@@ -39,6 +39,7 @@ WhisperOS is an experimental, AI-powered music studio built with web components 
 
 ## Testing / Known Limitations
 
-- The project has no automated test suite; rely on `npm run build` and manual testing in the browser.
+- Run `npm test` to execute the unit tests for core utilities.
+- Use `npm run build` and manual testing in the browser for end-to-end verification.
 - Requires a valid `GEMINI_API_KEY` and internet connectivity for AI features.
 - Generated content may vary in quality and the app is not yet production ready.
