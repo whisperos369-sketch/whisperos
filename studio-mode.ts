@@ -12,7 +12,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { sharedStyles } from './shared-styles.js';
 import { aiService } from './ai-service.js';
 import { StudioModule } from './studio-module.js';
-import { appContext } from './context.js';
+import { appContext, type Track } from './context.js';
 import { audioBufferToWav } from './utils.js';
 import { GENRES } from './data.js';
 
@@ -34,7 +34,7 @@ export class StudioMode extends StudioModule {
         `
     ];
 
-    private appContextConsumer = new ContextConsumer(this, {context: appContext, subscribe: true});
+    private appContextConsumer = new ContextConsumer<typeof appContext, StudioMode>(this, {context: appContext, subscribe: true});
 
     @state() private currentStep = 0;
     
@@ -268,7 +268,8 @@ export class StudioMode extends StudioModule {
                             const f2 = 110 * Math.pow(2, Math.floor(time*4)/12);
                             data[i] = (Math.sin(f1 * 2 * Math.PI * time) * 0.2 + Math.sin(f2 * 2 * Math.PI * time) * 0.1) * Math.exp(-time * 1);
                         }
-                        appContext.updateTrack({ title: title, artist: this.leadVocal, duration, audioBuffer: buffer });
+                        const track: Track = { title: title, artist: this.leadVocal, duration, audioBuffer: buffer };
+                        appContext.updateTrack(track);
                     }
                  });
                  if (!this.stopFlag) {
@@ -366,7 +367,8 @@ export class StudioMode extends StudioModule {
                 const time = i / sampleRate;
                 data[i] = (Math.random() * 2 - 1) * Math.exp(-time * 2) * 0.2;
             }
-            appContext.updateTrack({ title: `${this.songBrief.substring(0,20)}... (Instrumental)`, artist: 'MusicGen Agent', duration, audioBuffer: buffer });
+            const track: Track = { title: `${this.songBrief.substring(0,20)}... (Instrumental)`, artist: 'MusicGen Agent', duration, audioBuffer: buffer };
+            appContext.updateTrack(track);
         });
     }
 

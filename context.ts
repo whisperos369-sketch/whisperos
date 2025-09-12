@@ -6,16 +6,19 @@
 
 import {createContext} from '@lit/context';
 
+// Track definition
+export interface Track {
+    title: string;
+    artist: string;
+    duration: number;
+    audioBuffer: AudioBuffer | null;
+}
+
 // State Context
 export type AppContext = {
     audioContext: AudioContext | null;
-    currentTrack: { 
-        title: string,
-        artist: string,
-        duration: number,
-        audioBuffer: AudioBuffer | null,
-    },
-    updateTrack: (track: { title: string, artist: string, duration: number, audioBuffer: AudioBuffer | null }) => void;
+    currentTrack: Track;
+    updateTrack: (track: Track) => void;
     isPlaying: boolean;
     togglePlay: () => void;
 };
