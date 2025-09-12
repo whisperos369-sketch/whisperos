@@ -219,6 +219,11 @@ export class JChat extends LitElement {
     `;
 
     override firstUpdated() {
+        if (!aiService) {
+            this.messages = [{ role: 'model', text: 'AI service unavailable. Please set GEMINI_API_KEY.' }];
+            return;
+        }
+
         aiService.initializeChat();
         this.messages = [{
             role: 'model',
@@ -261,7 +266,12 @@ export class JChat extends LitElement {
     private async _sendMessage() {
         const userInput = this.input.value.trim();
         if (!userInput || this.isLoading) return;
-        
+
+        if (!aiService) {
+            this.messages = [...this.messages, {role: 'model', text: 'AI service unavailable. Please set GEMINI_API_KEY.'}];
+            return;
+        }
+
         // Stop any currently playing speech
         speechSynthesis.cancel();
         this.utteranceQueue = [];

@@ -199,6 +199,13 @@ export class StudioMode extends StudioModule {
     }
 
     private async _handleNextStep() {
+        if (!aiService) {
+            this.statusMessage = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            console.error(this.statusMessage);
+            this._updatePrimaryAction();
+            return;
+        }
+
         this.isLoading = true;
         this._updatePrimaryAction();
         
@@ -285,6 +292,13 @@ export class StudioMode extends StudioModule {
     }
 
     private async _handleGenerateOrRegenerateVocalGuide() {
+        if (!aiService) {
+            this.statusMessage = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            console.error(this.statusMessage);
+            this._updatePrimaryAction();
+            return;
+        }
+
         const stages = [
             { message: '[Vocal Studio] Analyzing lyrics...', duration: 1000 },
             { message: '[Vocal Studio] Generating performance guide...', duration: 2000 },
@@ -328,10 +342,15 @@ export class StudioMode extends StudioModule {
 
     private async _updateInstrumentalDescription() {
         if (!this.songBrief) return;
-        
+
+        if (!aiService) {
+            this.instrumentalDescription = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            return;
+        }
+
         this.isDescriptionLoading = true;
         const prompt = this._getInstrumentalPrompt();
-        
+
         try {
             const description = await aiService.generateMusicDescription(prompt, this.instrumentalComplexity);
             this.instrumentalDescription = description;
@@ -344,6 +363,13 @@ export class StudioMode extends StudioModule {
     }
 
     private async _generateInstrumentalPreview() {
+        if (!aiService) {
+            this.statusMessage = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            console.error(this.statusMessage);
+            this._updatePrimaryAction();
+            return;
+        }
+
         const appContext = this.appContextConsumer.value;
         if (!appContext) return;
         

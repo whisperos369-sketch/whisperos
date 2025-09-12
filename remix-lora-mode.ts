@@ -81,6 +81,13 @@ export class RemixLoraMode extends StudioModule {
     }
 
     private async _generateRemixPlan() {
+        if (!aiService) {
+            this.statusMessage = 'AI service unavailable. Please set GEMINI_API_KEY.';
+            console.error(this.statusMessage);
+            this._updatePrimaryAction();
+            return;
+        }
+
         const stages = [
             { message: '[Remix Agent] Analyzing source...', duration: 1500 },
             { message: '[Remix Agent] Separating stems...', duration: 2000 },
